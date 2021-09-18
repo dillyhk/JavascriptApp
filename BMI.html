@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BMI</title>
+
+    <meta charset="utf-8" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=10.0, user-scalable=yes" name="viewport">
+
+    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+    <style>
+        .mt-1 {
+            margin-top: 1rem !important;
+        }
+
+        .range-desc {
+            display: inline-block;
+            color: #ff6a00;
+            margin-left: 10px;
+        }
+
+        .collapsible-item p {
+            margin: 5px 0;
+        }
+
+        .collapsible-item label {
+            display: inline-block;
+            font-weight: bold;
+            margin: 0;
+            width: 150px;
+        }
+    </style>
+</head>
+<body>
+
+    <div data-role="page">
+        <div data-role="header">
+            <h1>BMI 計算器</h1>
+        </div>
+
+        <div role="main" class="ui-content">
+            <div class="tab-content">
+                <div id="first">
+                    <h3>BMI 計算器</h3>
+                    <label for="kilogram" class="mt-1">請輸入體重 (公斤 / kg)：</label>
+                    <input type="number" id="kilogram" data-clear-btn="true" />
+
+                    <label for="height" class="mt-1">請輸入身高 (米 / m)：</label>
+                    <input type="number" id="height" data-clear-btn="true" />
+
+                    <button id="calcBtn" class="ui-btn mt-1">計 算</button>
+
+                    <label for="result" class="mt-1">BMI 範圍<span class="range-desc"></span></label>
+                    <input type="range" id="result" data-highlight="true" min="0" max="100" value="0" />
+                </div>
+
+                <div id="second">
+                    <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
+                        <h4>白 粥</h4>
+                        <div class="collapsible-item" data-role="controlgroup">
+                            <p><label>熱量</label><span>46 大卡（100克）</span></p>
+                            <p><label>熱量(大卡)</label><span>46.00</span></p>
+                            <p><label>碳水化合物(克)</label><span>9.90</span></p>
+                            <p><label>脂肪(克)</label><span>0.30</span></p>
+                            <p><label>蛋白質(克)</label><span>1.10</span></p>
+                            <p><label>纖維素(克)</label><span>0.10</span></p>
+                        </div>
+                    </div>
+
+                    <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
+                        <h4>雞 蛋</h4>
+                        <div class="collapsible-item" data-role="controlgroup">
+                            <p><label>熱量</label><span>144 大卡（100克可食部分）</span></p>
+                            <p><label>熱量(大卡)</label><span>144.00</span></p>
+                            <p><label>碳水化合物(克)</label><span>2.80</span></p>
+                            <p><label>脂肪(克)</label><span>8.80</span></p>
+                            <p><label>蛋白質(克)</label><span>13.30</span></p>
+                            <p><label>維生素A(微克)</label><span>234.00</span></p>
+                        </div>
+                    </div>
+
+                    <div data-role="collapsible" data-collapsed-icon="carat-d" data-expanded-icon="carat-u">
+                        <h4>豆 漿</h4>
+                        <div class="collapsible-item" data-role="controlgroup">
+                            <p><label>熱量</label><span>31 大卡（100毫升）</span></p>
+                            <p><label>熱量(大卡)</label><span>31.00</span></p>
+                            <p><label>碳水化合物(克)</label><span>1.20</span></p>
+                            <p><label>脂肪(克)</label><span>1.60</span></p>
+                            <p><label>蛋白質(克)</label><span>3.00</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div data-role="footer">
+            <div data-role="navbar">
+                <ul>
+                    <li><a href="#" class="ui-btn-active" data-tab="first" data-icon="grid">BMI 計算器</a></li>
+                    <li><a href="#" data-tab="second" data-icon="bullets">食物卡路里</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(function () {
+            $('#second').hide();
+
+            $(document).delegate('[data-role="navbar"] a', 'click', function () {
+                $('[data-role="navbar"] a').removeClass("ui-btn-active");
+                $('.tab-content').children().hide();
+                $('#' + $(this).attr('data-tab')).show();
+                $("html,body").animate({ scrollTop: 0 }, 500);
+                $(this).addClass("ui-btn-active");
+            });
+
+            $('[type=number]').on('keypress', function (e) {
+                if (e.which == 13) {
+                    $('#calcBtn').click();
+                }
+            });
+
+            $('#calcBtn').on('click', function () {
+                var $kilogram = $('#kilogram').val();
+                var $height = $('#height').val();
+
+                if ($kilogram >= 0 && $height >= 0) {
+                    let $txt = null;
+                    let $bmi = ($kilogram / $height * $height).toFixed(2);
+
+                    $('#result').val($bmi).slider("refresh");
+
+                    if ($bmi <= 18.5) {
+                        $txt = "體重過輕";
+                    }
+                    else if ($bmi > 18.5 && 24 >= $bmi) {
+                        $txt = "正常範圍";
+                    }
+                    else {
+                        $txt = "體重過重";
+                    }
+
+                    $('.range-desc').html("(" + $txt + ")");
+                }
+                else {
+                    alert('請輸入體重 / 身高 !');
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
